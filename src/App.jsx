@@ -8,6 +8,7 @@ function App() {
   const [rightResolution, setRightResolution] = useState(null)
   const [processedLeftImage, setProcessedLeftImage] = useState(null)
   const [processedRightImage, setProcessedRightImage] = useState(null)
+  const [copyStatus, setCopyStatus] = useState('Copy Prompt')
 
   const processLeftImage = (file) => {
     if (!file) return;
@@ -50,6 +51,16 @@ function App() {
     document.body.removeChild(link);
   }
 
+  const handleCopyPrompt = () => {
+    const prompt = "Remove all watermarks from the image. Detect and restore any blurry or unclear text to ensure it is sharp and legible. Upscale and output the image in the highest possible quality.";
+    navigator.clipboard.writeText(prompt).then(() => {
+      setCopyStatus('Copied! 📋');
+      setTimeout(() => {
+        setCopyStatus('Copy Prompt');
+      }, 5000);
+    });
+  }
+
   const processRightImage = (file) => {
     if (!file) return;
     const img = new Image();
@@ -85,7 +96,7 @@ function App() {
     <div className="container">
       <div className="split-pane left-pane">
         <div className="content">
-          <h1>Nano Banana <br /><span className="highlight">Extender</span></h1>
+          <h1>Upload <br /><span className="highlight">Original Image</span></h1>
           <p className="description">Upload & Extend Height by 10%</p>
 
           <div className="upload-area">
@@ -103,13 +114,19 @@ function App() {
             )}
           </div>
 
-          <div className="actions">
+          <div className="actions" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             <button
               className="btn secondary"
               disabled={!processedLeftImage}
               onClick={() => downloadImage(processedLeftImage, 'extended_image.png')}
             >
               Download Extended
+            </button>
+            <button
+              className="btn secondary"
+              onClick={handleCopyPrompt}
+            >
+              {copyStatus}
             </button>
           </div>
 
@@ -124,7 +141,7 @@ function App() {
 
       <div className="split-pane right-pane">
         <div className="content">
-          <h1>Nano Banana <br /><span className="highlight pink">Remover</span></h1>
+          <h1>Upload <br /><span className="highlight pink">Watermark Removed Image</span></h1>
           <p className="description">Upload & Crop Extension</p>
 
           <div className="upload-area">
